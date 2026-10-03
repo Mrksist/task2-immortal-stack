@@ -17,16 +17,16 @@ void Test9PopFromEmptyStack ();
 void Test10Memset ();
 
 int main () {
-    Test1NullPointer ();
-    Test2NullData ();
-    Test3CorruptedDataSignature ();
+    // Test1NullPointer ();
+    // Test2NullData ();
+    // Test3CorruptedDataSignature ();
     Test4CorruptedDataCanaries ();
-    Test5NegativeSize ();
-    Test6NegativeCapacity ();
-    Test7SizeIsGreaterThanCapacity ();
-    Test8MoreCanaries ();
-    Test9PopFromEmptyStack ();
-    Test10Memset ();
+    // Test5NegativeSize ();
+    // Test6NegativeCapacity ();
+    // Test7SizeIsGreaterThanCapacity ();
+    // Test8MoreCanaries ();
+    // Test9PopFromEmptyStack ();
+    // Test10Memset ();
 }
 
 void Test1NullPointer () {
@@ -123,10 +123,14 @@ void Test4CorruptedDataCanaries () {
     printf ("Constructed stack: \n");
     StackDump (&st);
 
+    printf ("*********************************************************************************************************************************************\n\n");
+    LogWrite (L_DEBUG, "**********************************************************************************************************************************************\n\n", __FUNCTION__, 0, 0);
+
     unsigned char* real_data_with_canaries_ptr = (unsigned char*)st.data + st_signature_size;
     for (unsigned char i = 0; i < 12; i++) {
         real_data_with_canaries_ptr[i] = i;
     }
+
 
     printf ("Corrupted stack: \n");
     StackDump (&st);

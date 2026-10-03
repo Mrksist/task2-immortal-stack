@@ -42,7 +42,7 @@ static void cat_err (char* dest, const char* message) {
     strcat (dest, message);
 }
 
-const char* GetErrorString (unsigned errcode) {
+const char* GetErrorString (stack_err_t errcode) {
     if (errcode == STCK_OK) {
         return "STCK_OK";
     }
@@ -128,8 +128,11 @@ unsigned long long CalcHash(unsigned char *data, size_t size) {
 }
 #endif
 
+// TODO: СДЕЛАТЬ НОВУЮ ФУНКЦИЮ! СДЕЛАТЬ НОВУЮ ФУНКЦИЮ!
+// которая будет проверять указатель на безопасность
+
 unsigned StackCheck (stack_t* st_ptr) {
-    int pfd[2];
+    int pfd[2] = {};
     int pipe_cr_res = pipe(pfd);
 
     if (pipe_cr_res < 0) {

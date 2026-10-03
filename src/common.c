@@ -109,7 +109,7 @@ stack_err_t StackPush (stack_t* st_ptr, stack_el_t elem) {
 
     stack_el_t* real_data = GetFirstElemPtr (st.data) + st.size;
 
-    *real_data = elem;
+    memcpy (real_data, &elem, st_elem_size);
 
     (*st_ptr).size++;
 
@@ -137,7 +137,7 @@ stack_err_t StackPop (stack_el_t* dst_elem, stack_t* st_ptr) {
 
     stack_el_t* elem_in_stack = GetFirstElemPtr (st.data) + st.size - 1;
 
-    *dst_elem = *elem_in_stack;
+    memcpy (dst_elem, elem_in_stack, st_elem_size);
     
     ONDEBUG({
         memmove (elem_in_stack, GetSecondCanaryPtr (st.data, st.size), st_canary_size);

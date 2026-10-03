@@ -31,7 +31,6 @@ void $DebugBytesDump (const unsigned char* data, size_t nbytes);
 //               Mitigation functions
 // *********************************************
 
-const char* GetErrorString(unsigned errcode);
 stack_err_t StackCheck (stack_t* st_ptr);
 stack_canary_t GetCanary (unsigned canary_no);
 

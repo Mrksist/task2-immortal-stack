@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <memory.h>
 
 #include "mystack.h"
 #include "internal.h"
@@ -74,7 +75,9 @@ void StackDump (stack_t* st_ptr) {
     else {
         printf ("%s", ESC_BOLD);
         for(unsigned i = 0; i < st.size; i++) {
-            printf ("%12d", real_data[i]);
+            stack_el_t entry = 0;
+            memcpy (&entry, (real_data + i), st_elem_size);
+            printf ("%12d", entry);
         }
         printf ("%s", ESC_RESET);
     }

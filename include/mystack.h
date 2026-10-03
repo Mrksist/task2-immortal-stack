@@ -88,4 +88,6 @@ stack_err_t StackPop (stack_el_t* dst_elem, stack_t* st_ptr);
 
 stack_err_t StackDtor (stack_t* st_ptr);
 
+const char* GetErrorString(stack_err_t errcode);
+
 #endif // STACK_H
