@@ -128,32 +128,49 @@ unsigned long long CalcHash(unsigned char *data, size_t size) {
 }
 #endif
 
-// TODO: СДЕЛАТЬ НОВУЮ ФУНКЦИЮ! СДЕЛАТЬ НОВУЮ ФУНКЦИЮ!
-// которая будет проверять указатель на безопасность
-
-unsigned StackCheck (stack_t* st_ptr) {
+int CheckIsPointerReadable (void* ptr) {
     int pfd[2] = {};
     int pipe_cr_res = pipe(pfd);
 
     if (pipe_cr_res < 0) {
+        return -1;
+    }
+
+    ssize_t write_res = write (pfd[1], st_ptr, 1);
+ 
+    if (write_res == -1 && errno == EFAULT) {
+        return 1;
+    }
+
+    close (pfd[0]);
+    close (pfd[1]);
+
+    return 0;
+}
+
+unsigned StackCheck (stack_t* st_ptr) {
+    int st_ptr_invalid = CheckIsPointerReadable (st_ptr);
+
+    if (st_ptr_invalid < 0) {
         LogWrite (L_CRITICAL, "Cannot create pipe", __FUNCTION__, st_ptr, 0);
         return STCK_CANNOT_CREATE_PIPE;
     }
 
-    ssize_t write_res = write (pfd[1], st_ptr, 1);
-
-    if (write_res == -1 && errno == EFAULT) {
+    if (st_ptr_invalid) {
         LogWrite (L_CRITICAL, "Stack pointer given to checker is unaccessible", __FUNCTION__, st_ptr, 0);
         return STCK_UNACCESSIBLE;
     }
 
-    assert (write_res != -1);
-
     stack_t st = *st_ptr;
 
-    write_res = write (pfd[1], st.data, 1);
+    int st_data_ptr_invalid = CheckIsPointerReadable (st.data);
 
-    if (write_res == -1 && errno == EFAULT) {
+    if (st_data_ptr_invalid < 0) {
+        LogWrite (L_CRITICAL, "Cannot create pipe", __FUNCTION__, st_ptr, 0);
+        return STCK_CANNOT_CREATE_PIPE;
+    }
+
+    if (st_data_ptr_invalid) {
         LogWrite (L_CRITICAL, "Stack data pointer %llx given to checker is unaccessible", __FUNCTION__, st_ptr, 2, (unsigned long long)st.data);
         return STCK_DATA_UNACCESSIBLE;
     }
@@ -218,9 +235,6 @@ unsigned StackCheck (stack_t* st_ptr) {
             res |= STCK_WRONG_STRUCT_HASH;
         }
     });
-
-    close(pfd[0]);
-    close(pfd[1]);
 
     return res;
 }
